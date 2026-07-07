@@ -25,6 +25,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public Student getStudentById(@PathVariable Long id) {
+        System.out.println("Controller method reached");
         return studentService.getStudentById(id);
     }
 
