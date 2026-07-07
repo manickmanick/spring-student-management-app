@@ -1,8 +1,11 @@
 package com.example.studentmanagement.service;
 
+import com.example.studentmanagement.dto.StudentRequest;
+import com.example.studentmanagement.entity.Student;
 import com.example.studentmanagement.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class StudentService {
@@ -13,4 +16,43 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+    }
+
+    public Student createStudent(StudentRequest request) {
+
+        Student student = new Student();
+
+        student.setName(request.getName());
+        student.setAge(request.getAge());
+        student.setDepartment(request.getDepartment());
+
+        return studentRepository.save(student);
+    }
+
+    public Student updateStudent(Long id, StudentRequest request) {
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        student.setName(request.getName());
+        student.setAge(request.getAge());
+        student.setDepartment(request.getDepartment());
+
+        return studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        studentRepository.delete(student);
+    }
 }
