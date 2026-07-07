@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.studentmanagement.security.JwtService;
 
 @Service
 public class AuthService {
@@ -16,14 +17,16 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager,JwtService jwtService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public String register(RegisterRequest request) {
@@ -51,6 +54,9 @@ public class AuthService {
                 )
         );
 
-        return "Login Successful";
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow();
+
+        return jwtService.generateToken(user);
     }
 }
